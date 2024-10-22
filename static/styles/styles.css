@@ -1,55 +1,23 @@
 body {
-    background-color: #ffffff;
-    color: #000000;
-   
+    background-color: #000; 
+    color: #fff; 
 }
 
 .header {
-    background-color: #000000;
-    color: white;
-    padding: 15px;
+    background-color: #1a1a1a; 
 }
 
-.sidebar {
-    height: 100vh;
-    background-color: #f8f9fa;
-    border-right: 1px solid #dee2e6;
+.alert {
+    color: #000; 
 }
 
-.sidebar a {
-    color: #000000;
+.form-control {
+    background-color: #2a2a2a; 
+    color: #fff; 
 }
 
-.sidebar a:hover {
-    background-color: #e2e2e2;
+.form-control:focus {
+    background-color: #3a3a3a; 
+    color: #fff; 
+    box-shadow: none; 
 }
-
-.main-content {
-    padding: 20px;
-}
-
-.card {
-    margin-bottom: 20px;
-    border: 1px solid #000;
-}
-
-
-.header h2 {
-    margin: 0;
-}
-.table th {
-    background-color: #000000;
-    color: white;
-}
-.btn-custom {
-    background-color: #007bff;
-    color: white;
-}
-.btn-custom:hover {
-    background-color: #0056b3;
-}
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-
