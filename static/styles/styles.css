@@ -21,3 +21,36 @@ body {
     color: #fff; 
     box-shadow: none; 
 }
+
+.custom-file-upload {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    margin-top: 5px; /* Espaciado superior */
+}
+
+.custom-file-upload input[type="file"] {
+    font-size: 20px; /* Tamaño de fuente */
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0; /* Oculta el input */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el input */
+    height: 100%;
+    width: 100%;
+}
+
+.custom-file-upload label {
+    display: inline-block;
+    padding: 10px 20px; /* Relleno */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el label */
+    border: 1px solid #007bff; /* Bordes del botón */
+    background-color: #007bff; /* Color de fondo */
+    color: white; /* Color del texto */
+    border-radius: 5px; /* Bordes redondeados */
+    transition: background-color 0.3s; /* Transición suave */
+}
+
+.custom-file-upload label:hover {
+    background-color: #0056b3; /* Color de fondo al pasar el ratón */
+}

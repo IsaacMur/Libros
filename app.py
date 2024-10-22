@@ -67,6 +67,7 @@ def login():
     return render_template('login.html', form=form)
 
 # I N S E R T A R 
+# I N S E R T A R 
 @app.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
@@ -81,10 +82,10 @@ def home():
 
         try:
             libro_cqrs.insertar_libro(nombre, autor, genero, estatus, archivo)
-            flash('Libro creado exitosamente', 'success')
+            flash('Libro creado exitosamente', 'success')  # Mensaje de éxito
             return redirect(url_for('home'))
         except ValidationError as e:
-            flash(str(e), 'danger')
+            flash(str(e), 'danger')  # Mensaje de error
 
     libros = libro_cqrs.obtener_todos_los_libros()
     
@@ -96,7 +97,7 @@ def home():
 @login_required
 def eliminar_libro(id_libro):
     libro_cqrs.eliminar_libro(id_libro)
-    flash('Libro eliminado exitosamente', 'info')
+    flash('Libro eliminado exitosamente', 'info')  # Mensaje informativo
     return redirect(url_for('home'))
 
 
