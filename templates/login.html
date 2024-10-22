@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/inicio.css') }}">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="login-container card">
+            <div class="card-body">
+                <h2 class="text-center font-weight-bold">Iniciar Sesión</h2>
+                <form method="POST" action="{{ url_for('login') }}">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group font-weight-bold">
+                        {{ form.username.label(class="form-control-label font-weight-bold") }}
+                        {{ form.username(class="form-control") }}
+                    </div>
+                    <div class="form-group font-weight-bold">
+                        {{ form.password.label(class="form-control-label font-weight-bold") }}
+                        {{ form.password(class="form-control") }}
+                    </div>
+                    <div class="form-group text-center font-weight-bold">
+                        {{ form.submit(class="btn btn-primary") }}  <!-- Botón de envío -->
+                    </div>
+                </form>
+                {% with messages = get_flashed_messages(with_categories=True) %}
+                    {% if messages %}
+                        <div class="alert mt-3">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

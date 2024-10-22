@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editar Libro</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}" />
+    <style>
+        body {
+            background-color: #000; /* Fondo negro */
+            color: #fff; /* Texto blanco */
+        }
+        .header {
+            background-color: #1a1a1a; /* Fondo de la cabecera */
+        }
+        .alert {
+            color: #000; /* Texto negro para alertas */
+        }
+        .form-control {
+            background-color: #2a2a2a; /* Fondo de los campos de entrada */
+            color: #fff; /* Texto blanco en los campos */
+        }
+        .form-control:focus {
+            background-color: #3a3a3a; /* Fondo de campo al hacer foco */
+            color: #fff; /* Texto blanco en el foco */
+            box-shadow: none; /* Sin sombra en el foco */
+        }
+    </style>
+</head>
+<body>
+    <div class="header text-light py-3 shadow">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h2 class="flex-grow-1 text-center font-weight-bold">B I B I O T E C A</h2>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <h3 class="text-center font-weight-bold">EDITA LIBRO</h3>
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    {{ form.nombre.label(class="form-label") }}
+                    {{ form.nombre(class="form-control form-control-sm") }}
+                </div>
+                <div class="col-md-6 form-group">
+                    {{ form.autor.label(class="form-label") }}
+                    {{ form.autor(class="form-control form-control-sm") }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    {{ form.genero.label(class="form-label") }}
+                    {{ form.genero(class="form-control form-control-sm") }}
+                </div>
+                <div class="col-md-6 form-group">
+                    {{ form.estatus.label(class="form-label") }}
+                    {{ form.estatus(class="form-control form-control-sm") }}
+                </div>
+            </div>
+            <div class="form-group">
+                {{ form.archivo.label(class="form-label") }}
+                {{ form.archivo(class="form-control-file") }}
+                <small class="form-text text-muted">Deja en blanco si no deseas cambiar el archivo.</small>
+            </div>            
+            <button type="submit" class="btn btn-primary">Actualizar Libro</button>
+        </form>
+
+        {% with messages = get_flashed_messages() %} 
+    {% if messages %}
+        <div class="alert alert-danger mt-3">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %} 
+{% endwith %}
+
+    </div>
+</body>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

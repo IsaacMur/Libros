@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #000; /* Fondo negro */
+            color: #fff; /* Texto blanco */
+        }
+        .header {
+            background-color: #1a1a1a; /* Fondo de la cabecera */
+        }
+        .alert {
+            color: #000; /* Texto negro para alertas */
+        }
+        .form-control {
+            background-color: #2a2a2a; /* Fondo de los campos de entrada */
+            color: #fff; /* Texto blanco en los campos */
+        }
+        .form-control:focus {
+            background-color: #3a3a3a; /* Fondo de campo al hacer foco */
+            color: #fff; /* Texto blanco en el foco */
+            box-shadow: none; /* Sin sombra en el foco */
+        }
+    </style>
+</head>
+<body>
+    <div class="header text-light py-3 shadow">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h2 class="flex-grow-1 text-center font-weight-bold">B I B I O T E C A</h2>
+            <div class="text-right d-flex align-items-center">
+                <h6 class="mb-0 mr-2">Bienvenido, <span class="font-italic">{{ username }}</span></h6>
+                <a class="btn btn-outline-light btn-sm" href="{{ url_for('logout') }}">Cerrar sesión</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <h3 class="text-center font-weight-bold">Gestión de Libros</h3>
+        <form method="POST" enctype="multipart/form-data" class="mb-4">
+            {{ form.hidden_tag() }}
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    {{ form.nombre.label(class="form-label") }}
+                    {{ form.nombre(class="form-control form-control-sm mb-3") }}
+                    {% if form.nombre.errors %}
+                        <div class="alert alert-danger">
+                            {{ form.nombre.errors[0] }}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-6 form-group">
+                    {{ form.autor.label(class="form-label") }}
+                    {{ form.autor(class="form-control form-control-sm mb-3") }}
+                    {% if form.autor.errors %}
+                        <div class="alert alert-danger">
+                            {{ form.autor.errors[0] }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    {{ form.genero.label(class="form-label") }}
+                    {{ form.genero(class="form-control form-control-sm mb-3") }}
+                    {% if form.genero.errors %}
+                        <div class="alert alert-danger">
+                            {{ form.genero.errors[0] }}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-6 form-group">
+                    {{ form.estatus.label(class="form-label") }}
+                    {{ form.estatus(class="form-control form-control-sm") }}
+                    {% if form.estatus.errors %}
+                        <div class="alert alert-danger mt-1">
+                            {{ form.estatus.errors[0] }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group">
+                {{ form.archivo.label(class="form-label") }}
+                {{ form.archivo(class="form-control-file") }}
+                {% if form.archivo.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.archivo.errors[0] }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Agregar Libro</button>
+        </form>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-info mt-3">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <table class="table mt-4 table-bordered table-dark">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Autor</th>
+                    <th>Género</th>
+                    <th>Estatus</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for libro in libros %}
+                    <tr>
+                        <td>{{ libro[0] }}</td>
+                        <td>{{ libro[1] }}</td>
+                        <td>{{ libro[2] }}</td>
+                        <td>{{ libro[3] }}</td>
+                        <td>{{ libro[4] }}</td>
+                        <td>
+                            <!-- Acción Ver PDF -->
+                            <a href="{{ url_for('ver_pdf', id_libro=libro[0]) }}" class="btn btn-info" title="Ver PDF">
+                                <i class="fas fa-file-pdf"></i>
+                            </a>
+            
+                            <!-- Acción Editar -->
+                            <a href="{{ url_for('editar_libro', id_libro=libro[0]) }}" class="btn btn-warning" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </a>
+            
+                            <!-- Acción Eliminar -->
+                            <a href="{{ url_for('eliminar_libro', id_libro=libro[0]) }}" class="btn btn-danger" title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
