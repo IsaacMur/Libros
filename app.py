@@ -5,6 +5,8 @@ from wtforms import StringField, PasswordField, SubmitField, FileField, IntegerF
 from wtforms.validators import DataRequired, Length, ValidationError
 from dao.libro_dao import LibroDAO
 from cqrs.libro_cqrs import LibroCQRS 
+from viewmodels.libro_viewmodel import LibroViewModel
+from flask import jsonify
 
 app = Flask(__name__)
 app.secret_key = 'tu_secreto' 
@@ -66,7 +68,13 @@ def login():
     
     return render_template('login.html', form=form)
 
-# I N S E R T A R 
+# C E R R A R   S E S I O N 
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect(url_for('login'))
+
+
 # I N S E R T A R 
 @app.route('/home', methods=['GET', 'POST'])
 @login_required
@@ -82,10 +90,10 @@ def home():
 
         try:
             libro_cqrs.insertar_libro(nombre, autor, genero, estatus, archivo)
-            flash('Libro creado exitosamente', 'success')  # Mensaje de éxito
+            flash('Libro creado exitosamente', 'success')  
             return redirect(url_for('home'))
         except ValidationError as e:
-            flash(str(e), 'danger')  # Mensaje de error
+            flash(str(e), 'danger')
 
     libros = libro_cqrs.obtener_todos_los_libros()
     
@@ -152,11 +160,25 @@ def ver_pdf(id_libro):
         return redirect(url_for('home'))
 
 
-# C E R R A R   S E S I O N 
-@app.route('/logout')
-def logout():
-    session.pop('user', None)
-    return redirect(url_for('login'))
+
+# B U S C A R   T O D O S   L O S   L I B R O S
+@app.route('/api/libros', methods=['GET'])
+def api_obtener_libros():
+    libros = libro_cqrs.obtener_todos_los_libros()
+    libros_viewmodel = [LibroViewModel(libro).to_json() for libro in libros]
+    return jsonify(libros_viewmodel)
+
+
+# B U S C A R    E L   L I B R O    P O R    I D 
+@app.route('/api/libros/<int:id_libro>', methods=['GET'])
+def api_obtener_libro_por_id(id_libro):
+    libro = libro_cqrs.obtener_libro_por_id(id_libro)
+    if libro:
+        libro_viewmodel = LibroViewModel(libro).to_json()
+        return jsonify(libro_viewmodel)
+    else:
+        return jsonify({"error": "Libro no encontrado"}), 404
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=8080)

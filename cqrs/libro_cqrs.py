@@ -1,5 +1,4 @@
 from wtforms.validators import ValidationError
-from dao.libro_dao import LibroDAO
 
 def validar_nombre(nombre):
     if len(nombre) < 5 or len(nombre) > 100:
