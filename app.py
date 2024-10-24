@@ -204,14 +204,20 @@ def api_insertar_libro():
 
     if not all([titulo_libro, nombre_autor, categoria_genero, estado_disponibilidad, contenido_archivo]):
         return jsonify({"error": "Faltan campos requeridos"}), 400
+
     if estado_disponibilidad not in ['0', '1']:
         return jsonify({"error": "Estatus inválido"}), 400
+
     try:
-        libro_cqrs.insertar_libro(titulo_libro, nombre_autor, categoria_genero, estado_disponibilidad, contenido_archivo)
-        return jsonify({"mensaje": "Libro insertado exitosamente"}), 201
+        libro_id = libro_cqrs.insertar_libro(titulo_libro, nombre_autor, categoria_genero, estado_disponibilidad, contenido_archivo)
+        
+        nuevo_libro = libro_cqrs.obtener_libro_por_id(libro_id)
+        libro_viewmodel = LibroViewModel(nuevo_libro).to_json()
+        
+        return jsonify({"mensaje": "Libro insertado exitosamente", "libro": libro_viewmodel}), 201
     except ValidationError as e:
         return jsonify({"error": str(e)}), 400
-    
+
 
 # A C T U A L I Z A R   L I B R O   C O N   V A L I D A C I O N E S
 @app.route('/api/libros/<int:id_libro>', methods=['PUT'])
@@ -220,6 +226,7 @@ def api_actualizar_libro(id_libro):
 
     if not data:
         return jsonify({"error": "No se recibieron datos"}), 400
+
     titulo_libro = data.get('titulo')  
     nombre_autor = data.get('autor')
     categoria_genero = data.get('genero')
@@ -228,6 +235,7 @@ def api_actualizar_libro(id_libro):
     
     if not all([titulo_libro, nombre_autor, categoria_genero, estado_disponibilidad]):
         return jsonify({"error": "Faltan campos requeridos"}), 400
+
     if estado_disponibilidad not in ['0', '1']:
         return jsonify({"error": "Estatus inválido"}), 400
 
@@ -240,7 +248,11 @@ def api_actualizar_libro(id_libro):
 
     try:
         libro_cqrs.actualizar_libro(id_libro, titulo_libro, nombre_autor, categoria_genero, estado_disponibilidad, contenido_archivo)
-        return jsonify({"mensaje": "Libro actualizado exitosamente"}), 200
+
+        libro_actualizado = libro_cqrs.obtener_libro_por_id(id_libro)
+        libro_viewmodel = LibroViewModel(libro_actualizado).to_json()
+        
+        return jsonify({"mensaje": "Libro actualizado exitosamente", "libro": libro_viewmodel}), 200
     except ValidationError as e:
         return jsonify({"error": str(e)}), 400
 
