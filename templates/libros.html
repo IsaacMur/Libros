@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Libros</title>
+    <script>
+        async function buscarTodosLosLibros() {
+            const response = await fetch('/api/libros');
+            const data = await response.json();
+            document.getElementById('resultado').innerHTML = JSON.stringify(data, null, 2);
+        }
+
+        async function buscarLibroPorId() {
+            const id = document.getElementById('id_libro').value;
+            const response = await fetch(`/api/libros/${id}`);
+            const data = await response.json();
+            document.getElementById('resultado').innerHTML = JSON.stringify(data, null, 2);
+        }
+
+        async function insertarLibro() {
+            const titulo = document.getElementById('titulo').value;
+            const autor = document.getElementById('autor').value;
+            const genero = document.getElementById('genero').value;
+            const estatus = document.getElementById('estatus').value;
+            const archivo = document.getElementById('archivo').files[0];
+
+            const reader = new FileReader();
+            reader.onload = async function(event) {
+                const archivoBase64 = event.target.result.split(',')[1]; // Obtiene solo el Base64
+
+                const data = {
+                    titulo: titulo,
+                    autor: autor,
+                    genero: genero,
+                    estatus: estatus,
+                    archivo: archivoBase64
+                };
+
+                const response = await fetch('/api/libros', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                document.getElementById('resultado').innerHTML = JSON.stringify(result, null, 2);
+            };
+
+            reader.readAsDataURL(archivo); // Convierte el archivo a Base64
+        }
+
+        async function actualizarLibro() {
+            const id = document.getElementById('id_libro_update').value;
+            const titulo = document.getElementById('titulo_update').value;
+            const autor = document.getElementById('autor_update').value;
+            const genero = document.getElementById('genero_update').value;
+            const estatus = document.getElementById('estatus_update').value;
+            const archivo = document.getElementById('archivo_update').files[0];
+
+            const reader = new FileReader();
+            reader.onload = async function(event) {
+                const archivoBase64 = event.target.result ? event.target.result.split(',')[1] : null;
+
+                const data = {
+                    titulo: titulo,
+                    autor: autor,
+                    genero: genero,
+                    estatus: estatus,
+                    archivo: archivoBase64 // Puede ser null si no se selecciona nuevo archivo
+                };
+
+                const response = await fetch(`/api/libros/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                document.getElementById('resultado').innerHTML = JSON.stringify(result, null, 2);
+            };
+
+            if (archivo) {
+                reader.readAsDataURL(archivo); // Convierte el archivo a Base64
+            } else {
+                // Si no se selecciona un archivo, aún se puede realizar la actualización
+                const data = {
+                    titulo: titulo,
+                    autor: autor,
+                    genero: genero,
+                    estatus: estatus,
+                    archivo: null
+                };
+
+                const response = await fetch(`/api/libros/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                document.getElementById('resultado').innerHTML = JSON.stringify(result, null, 2);
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Gestión de Libros</h1>
+
+    <h2>Buscar todos los libros</h2>
+    <button onclick="buscarTodosLosLibros()">Buscar</button>
+
+    <h2>Buscar libro por ID</h2>
+    <input type="number" id="id_libro" placeholder="ID del libro">
+    <button onclick="buscarLibroPorId()">Buscar</button>
+
+    <h2>Insertar un libro</h2>
+    <input type="text" id="titulo" placeholder="Título del libro">
+    <input type="text" id="autor" placeholder="Autor del libro">
+    <input type="text" id="genero" placeholder="Género del libro">
+    <input type="number" id="estatus" placeholder="Estatus (0 o 1)">
+    <input type="file" id="archivo" accept="application/pdf">
+    <button onclick="insertarLibro()">Insertar</button>
+
+    <h2>Actualizar un libro</h2>
+    <input type="number" id="id_libro_update" placeholder="ID del libro a actualizar">
+    <input type="text" id="titulo_update" placeholder="Nuevo título del libro">
+    <input type="text" id="autor_update" placeholder="Nuevo autor del libro">
+    <input type="text" id="genero_update" placeholder="Nuevo género del libro">
+    <input type="number" id="estatus_update" placeholder="Nuevo estatus (0 o 1)">
+    <input type="file" id="archivo_update" accept="application/pdf">
+    <button onclick="actualizarLibro()">Actualizar</button>
+
+    <h2>Resultado</h2>
+    <pre id="resultado"></pre>
+</body>
+</html>

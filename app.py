@@ -160,6 +160,12 @@ def ver_pdf(id_libro):
         return redirect(url_for('home'))
 
 
+# P A R T E   P U B L I C A   M V V M 
+
+@app.route('/libros')
+def mostrar_libros():
+    return render_template('libros.html')
+
 
 # B U S C A R   T O D O S   L O S   L I B R O S
 @app.route('/api/libros', methods=['GET'])
@@ -167,6 +173,7 @@ def api_obtener_libros():
     libros = libro_cqrs.obtener_todos_los_libros()
     libros_viewmodel = [LibroViewModel(libro).to_json() for libro in libros]
     return jsonify(libros_viewmodel)
+
 
 
 # B U S C A R    E L   L I B R O    P O R    I D 
@@ -178,6 +185,64 @@ def api_obtener_libro_por_id(id_libro):
         return jsonify(libro_viewmodel)
     else:
         return jsonify({"error": "Libro no encontrado"}), 404
+
+
+
+# I N S E R T A R   L I B R O   C O N   V A L I D A C I O N E S
+@app.route('/api/libros', methods=['POST'])
+def api_insertar_libro():
+    data = request.get_json()
+
+    if not data:
+        return jsonify({"error": "No se recibieron datos"}), 400
+
+    titulo_libro = data.get('titulo')  
+    nombre_autor = data.get('autor')
+    categoria_genero = data.get('genero')
+    estado_disponibilidad = data.get('estatus')
+    contenido_archivo = data.get('archivo') 
+
+    if not all([titulo_libro, nombre_autor, categoria_genero, estado_disponibilidad, contenido_archivo]):
+        return jsonify({"error": "Faltan campos requeridos"}), 400
+    if estado_disponibilidad not in ['0', '1']:
+        return jsonify({"error": "Estatus inválido"}), 400
+    try:
+        libro_cqrs.insertar_libro(titulo_libro, nombre_autor, categoria_genero, estado_disponibilidad, contenido_archivo)
+        return jsonify({"mensaje": "Libro insertado exitosamente"}), 201
+    except ValidationError as e:
+        return jsonify({"error": str(e)}), 400
+    
+
+# A C T U A L I Z A R   L I B R O   C O N   V A L I D A C I O N E S
+@app.route('/api/libros/<int:id_libro>', methods=['PUT'])
+def api_actualizar_libro(id_libro):
+    data = request.get_json()
+
+    if not data:
+        return jsonify({"error": "No se recibieron datos"}), 400
+    titulo_libro = data.get('titulo')  
+    nombre_autor = data.get('autor')
+    categoria_genero = data.get('genero')
+    estado_disponibilidad = data.get('estatus')
+    contenido_archivo = data.get('archivo') 
+    
+    if not all([titulo_libro, nombre_autor, categoria_genero, estado_disponibilidad]):
+        return jsonify({"error": "Faltan campos requeridos"}), 400
+    if estado_disponibilidad not in ['0', '1']:
+        return jsonify({"error": "Estatus inválido"}), 400
+
+    libro_existente = libro_cqrs.obtener_libro_por_id(id_libro)
+    if not libro_existente:
+        return jsonify({"error": "Libro no encontrado"}), 404
+
+    if not contenido_archivo:
+        contenido_archivo = libro_existente[5]
+
+    try:
+        libro_cqrs.actualizar_libro(id_libro, titulo_libro, nombre_autor, categoria_genero, estado_disponibilidad, contenido_archivo)
+        return jsonify({"mensaje": "Libro actualizado exitosamente"}), 200
+    except ValidationError as e:
+        return jsonify({"error": str(e)}), 400
 
 
 if __name__ == '__main__':

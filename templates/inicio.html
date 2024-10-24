@@ -13,10 +13,10 @@
 <body>
     <div class="header text-light py-3 shadow">
     <div class="container d-flex justify-content-between align-items-center">
-        <h2 class="flex-grow-1 text-center font-weight-bold">B I B I O T E C A</h2>
+        <h2 class="flex-grow-1 text-center font-weight-bold">B I B L I O T E C A</h2>
         <div class="text-right d-flex align-items-center">
             <h6 class="mb-0 mr-2">
-                <i class="fas fa-user"></i> <!-- Ícono de usuario -->
+                <i class="fas fa-user"></i>
                 Bienvenido, <span class="font-italic">{{ username }}</span>
             </h6>
             <a class="btn btn-outline-light btn-sm" href="{{ url_for('logout') }}">Cerrar sesión</a>
@@ -110,19 +110,16 @@
                         <td>{{ libro[4] }}</td>
                         <td>
                             <!-- Acción Ver PDF -->
-                            <a href="{{ url_for('ver_pdf', id_libro=libro[0]) }}" class="btn btn-info" title="Ver PDF">
+                            <button class="btn btn-info" data-url="{{ url_for('ver_pdf', id_libro=libro[0]) }}" data-toggle="modal" data-target="#pdfModal" title="Ver PDF">
                                 <i class="fas fa-file-pdf"></i>
-                            </a>
-            
+                            </button>
+                                        
                             <!-- Acción Editar -->
                             <a href="{{ url_for('editar_libro', id_libro=libro[0]) }}" class="btn btn-warning" title="Editar">
                                 <i class="fas fa-edit"></i>
                             </a>
             
-                            <!-- Acción Eliminar -->
-                            <a href="{{ url_for('eliminar_libro', id_libro=libro[0]) }}" class="btn btn-danger" title="Eliminar">
-                                <i class="fas fa-trash"></i>
-                            </a>
+                        
                         </td>
                     </tr>
                 {% endfor %}
@@ -130,8 +127,34 @@
         </table>
     </div>
 
+    <!-- Modal para ver PDF -->
+    <div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pdfModalLabel">Ver PDF</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <iframe id="pdfViewer" src="" width="100%" height="500px"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        $('#pdfModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // El botón que activa el modal
+            var url = button.data('url'); // Extraer la URL del data-url
+            var modal = $(this);
+            modal.find('#pdfViewer').attr('src', url); // Asignar la URL al iframe
+        });
+    </script>
 </body>
 </html>
